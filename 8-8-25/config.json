@@ -1,0 +1,23 @@
+{
+  "money_per_point": 2.0,
+  "timezone": "US/Eastern",
+  "session": { "start": "08:30", "end": "15:30" },
+  "similarity": { "metric": "euclidean", "top_k": 30, "similarity_min": 0.85 },
+  "pre_context_minutes_default": 15,
+  "data": { "minute_csv": "data/minute_feed.csv" },
+  "models": {
+    "label_map": "models/label_map.json",
+    "vectors": "models/vectors.npy",
+    "ids": "models/ids.npy",
+    "kdtree": "models/kdtree.pkl"
+  },
+  "exports": {
+    "trades": "exports/trades.csv",
+    "matches": "exports/matches_default.csv",
+    "decisions": "exports/decisions_log.csv"
+  },
+  "ma": {
+    "default_show": false,
+    "lengths": [5, 21, 50, 200]
+  }
+}

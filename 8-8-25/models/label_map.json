@@ -1,0 +1,39 @@
+{
+  "units": "points",
+  "consolidation": {
+    "max_span": 7.0,
+    "max_net_abs": 3.0,
+    "min_turn_points": 2,
+    "max_origin_excursion": 3.5
+  },
+  "reversal": {
+    "min_leg": 3.5,
+    "min_span": 7.0,
+    "pivot_allowed": [3, 4],
+    "require_origin_cross": true
+  },
+  "step": {
+    "min_net": 5.0,
+    "max_net": 7.0,
+    "min_pushes": 2,
+    "min_retraces": 1,
+    "max_retrace_excursion": 1.5,
+    "push_over_retrace_strength": 1.25
+  },
+  "drive": {
+    "min_net": 7.0,
+    "max_turn_points": 1,
+    "min_bars_in_net": 3,
+    "min_bar_rate": 1.5,
+    "max_counter_bar": 1.0
+  },
+  "colors": {
+    "D+": "#6c5ce7",
+    "D-": "#0984e3",
+    "S+": "#d63031",
+    "S-": "#e17055",
+    "Z":  "#636e72",
+    "R+": "#00b894",
+    "R-": "#6c5c4c"
+  }
+}
