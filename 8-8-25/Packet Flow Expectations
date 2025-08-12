@@ -1,0 +1,93 @@
+# ================================
+# PACKET 1: DATA IMPORT PACKET
+# ================================
+# Role: Load and filter minute-level market data for session hours
+# Trigger: User clicks "Import Data" in UI
+# Location: load_minutes()
+packet_data_import = {
+    "raw_csv_path": DEFAULT_CSV,
+    "parsed_minutes_df": minutes_df,    # datetime, open, high, low, close, volume
+    "filtered_session": filtered_df     # Only rows between session_start and session_end times
+}
+
+# ================================
+# PACKET 2: STRATEGY EXECUTION PACKET
+# ================================
+# Role: Run Reverse Moby strategy logic on imported minute data
+# Trigger: User clicks "Run Strategy" in UI
+# Location: run_strategy()
+packet_strategy_execution = {
+    "input_minutes_df": filtered_df,         # From PACKET 1
+    "algo_config": {
+        "stop_loss_points": stop_loss_points,
+        "take_profit_points": take_profit_points,
+        "consolidation_threshold": consolidation_threshold
+    },
+    "trade_signals": signals_df,             # Strategy-generated trade entries/exits
+    "trade_list": trades_list,               # All trades with entry/exit times and PnL
+    "algo_pnl_total": total_algo_pnl         # Sum of all trade PnLs from algo
+}
+
+# ================================
+# PACKET 3: PATTERN CLASSIFICATION PACKET
+# ================================
+# Role: Classify each trade into deviation pattern groups (Drive, Step, Consolidation, Reversal)
+# Trigger: After strategy execution completes
+# Location: classify_patterns()
+packet_pattern_classification = {
+    "trade_list": trades_list,                # From PACKET 2
+    "classified_trades": classified_df,       # Each trade with pattern label + color coding
+    "pattern_stats": pattern_summary          # Count and PnL by pattern type
+}
+
+# ================================
+# PACKET 4: KDTREE SEARCH PACKET
+# ================================
+# Role: Find similar trade setups from historical dataset using KDTree similarity
+# Trigger: User selects a trade grouping and runs KDTree comparison
+# Location: run_kdtree_search()
+packet_kdtree_search = {
+    "selected_pattern_group": selected_pattern,   # User-selected trade group
+    "vectorized_patterns": vector_array,          # Numerical pattern vectors for KDTree
+    "kd_matches": kd_matches_list,                # List of closest matches with similarity scores
+    "kd_pnl_total": total_kd_pnl                   # PnL of matched historical trades
+}
+
+# ================================
+# PACKET 5: VISUALIZATION PACKET
+# ================================
+# Role: Render Plotly chart with trades, patterns, and KDTree matches
+# Trigger: After PACKET 2 and optionally PACKET 4
+# Location: redraw()
+packet_visualization = {
+    "minute_data": filtered_df,                    # From PACKET 1
+    "trade_overlays": classified_df,               # From PACKET 3
+    "kd_highlights": kd_matches_list,               # From PACKET 4
+    "chart_config": {
+        "max_zoom": "36h",                          # User requirement
+        "gap_padding": "small",
+        "color_map": {
+            "DRIVE_UP": "bright_green",
+            "STEP_UP": "green",
+            "CONSOLIDATE": "yellow",
+            "STEP_DN": "light_red",
+            "DRIVE_DN": "dark_red",
+            "REVERSAL_UP": "R+",
+            "REVERSAL_DN": "R-"
+        }
+    },
+    "rendered_chart": plotly_figure
+}
+
+# ================================
+# PACKET 6: UI RESPONSE PACKET
+# ================================
+# Role: Send results back to Streamlit interface
+# Trigger: Any major action (Import Data, Run Strategy, Run KDTree Search)
+# Location: UI event handlers in app.py
+packet_ui_response = {
+    "algo_pnl_total": total_algo_pnl,           # From PACKET 2
+    "kd_pnl_total": total_kd_pnl,               # From PACKET 4
+    "trade_list": classified_df,                # From PACKET 3
+    "chart_display": plotly_figure              # From PACKET 5
+}
